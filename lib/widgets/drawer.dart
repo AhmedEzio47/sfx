@@ -17,13 +17,13 @@ class _BuildDrawerState extends State<BuildDrawer> {
         children: <Widget>[
           ListTile(
             onTap: () {
-              Navigator.of(context).pushNamed('/bookmarks');
+              Navigator.of(context).pushNamed('/quiz');
             },
             title: Text(
-              'Bookmarks',
+              'Take a quiz!',
             ),
             leading: Icon(
-              Icons.bookmark_border,
+              Icons.videogame_asset,
             ),
           ),
           ListTile(

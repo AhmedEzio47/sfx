@@ -14,6 +14,7 @@ dependencies:
 
   audiofileplayer: ^1.1.1
   cupertino_icons: ^0.1.3
+  awesome_dialog: ^1.2.0
 
 dev_dependencies:
   flutter_test:
@@ -25,4 +26,7 @@ flutter:
    - assets/images/
    - assets/sounds/
    - assets/sounds/colt/
+   - assets/sounds/shelly/
+   - assets/sounds/elprimo/
+   - assets/sounds/bull/
 
