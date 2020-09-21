@@ -1,6 +1,6 @@
 class Strings {
   // App Strings - Those will be set anyway in the AppPage Class, so don't bother editing them from here
-  static String packageName = 'com.devyat.glitcher';
+  static String packageName = 'com.devyat.sfx';
   static String appVersion = '1.0.3';
   static String appName = 'SFX';
   static String buildNumber = '1.0';

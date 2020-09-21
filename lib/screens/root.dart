@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:sfx/constants/data.dart';
 import 'package:sfx/models/character_model.dart';
+import 'package:sfx/services/database_service.dart';
 import 'package:sfx/widgets/drawer.dart';
 
 class RootPage extends StatefulWidget {
@@ -11,57 +12,64 @@ class RootPage extends StatefulWidget {
 }
 
 class _RootPageState extends State<RootPage> {
-  Map<String, ByteData> _voices = Map<String, ByteData>();
   int _spawnedAudioCount = 0;
+  bool _pageReady = false;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text('Main'),
-        leading: Builder(
-          builder: (context) => Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: InkWell(
-              onTap: () => Scaffold.of(context).openDrawer(),
-              child: Icon(const IconData(58311, fontFamily: 'MaterialIcons')),
+    return _pageReady
+        ? Scaffold(
+            appBar: AppBar(
+              centerTitle: true,
+              title: Text('Main'),
+              leading: Builder(
+                builder: (context) => Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: InkWell(
+                    onTap: () => Scaffold.of(context).openDrawer(),
+                    child: Icon(
+                        const IconData(58311, fontFamily: 'MaterialIcons')),
+                  ),
+                ),
+              ),
             ),
-          ),
-        ),
-      ),
-      body: GridView.builder(
-        itemCount: characters.length,
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-        ),
-        itemBuilder: (context, index) {
-          return item(character: characters[index]);
-        },
-      ),
-      drawer: BuildDrawer(),
-    );
+            body: GridView.builder(
+              itemCount: Data.characters.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+              ),
+              itemBuilder: (context, index) {
+                return item(character: Data.characters[index]);
+              },
+            ),
+            drawer: BuildDrawer(),
+          )
+        : Scaffold(
+            body: Center(
+              child: Text('Loading...'),
+            ),
+          );
   }
 
   @override
   void initState() {
-    _loadAudioByteData();
+    getCharacters();
     super.initState();
   }
 
-  void _loadAudioByteData() async {
-    for (Character character in characters) {
-      ByteData voice = await rootBundle.load(character.voice);
-      _voices.putIfAbsent(character.voice, () => voice);
-    }
+  getCharacters() async {
+    Data.characters = await DatabaseService.getCharacters();
+    setState(() {
+      _pageReady = true;
+    });
   }
 
   item({Color backColor = Colors.white, Character character}) {
     return GestureDetector(
       onTap: () {
-        _voices[character.voice] == null
+        character.voice == null
             ? null
-            : Audio.loadFromByteData(_voices[character.voice],
+            : Audio.loadFromRemoteUrl(character.voice,
                 onComplete: () => setState(() => --_spawnedAudioCount))
           ..play()
           ..dispose();
@@ -73,7 +81,7 @@ class _RootPageState extends State<RootPage> {
         children: [
           Container(
             height: 150,
-            child: Image.asset(
+            child: Image.network(
               character.image,
               fit: BoxFit.fitHeight,
             ),
