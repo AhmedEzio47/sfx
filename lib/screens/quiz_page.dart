@@ -17,7 +17,7 @@ class QuizPage extends StatefulWidget {
 
 class _QuizPageState extends State<QuizPage> {
   List<Question> _questions = [];
-  int _questionsCount = 2;
+  int _questionsCount = 5;
   int _currentQuestion = 0;
   int _spawnedAudioCount = 0;
   int _score = 0;
@@ -59,16 +59,21 @@ class _QuizPageState extends State<QuizPage> {
           voice: sayingVoice, answer: Data.characters[randomCharacter].name);
 
       if (_questions.length > 0) {
-        while (_questions.contains(question)) {
-          randomSaying = random.nextInt(
-              Data.sayings[Data.characters[randomCharacter].id].length);
+        for (int i = 0; i < _questions.length; i++) {
+          while (_questions[i].voice == question.voice) {
+            randomCharacter = random.nextInt(Data.characters.length);
 
-          String sayingVoice = Data
-              .sayings[Data.characters[randomCharacter].id][randomSaying].voice;
+            randomSaying = random.nextInt(
+                Data.sayings[Data.characters[randomCharacter].id].length);
 
-          question = Question(
-              voice: sayingVoice,
-              answer: Data.characters[randomCharacter].name);
+            String sayingVoice = Data
+                .sayings[Data.characters[randomCharacter].id][randomSaying]
+                .voice;
+
+            question = Question(
+                voice: sayingVoice,
+                answer: Data.characters[randomCharacter].name);
+          }
         }
       }
       setState(() {
